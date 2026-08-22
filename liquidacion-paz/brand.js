@@ -19,6 +19,15 @@
       const cloud=document.createElement('script');
       cloud.src='cloud.js?v=2';
       cloud.async=false;
+      cloud.onload=()=>{
+        let tries=0;
+        const kick=()=>{
+          tries++;
+          if(window.PazSaleCloud && typeof db!=='undefined' && db){window.PazSaleCloud.sync();return;}
+          if(tries<40)setTimeout(kick,250);
+        };
+        kick();
+      };
       document.body.appendChild(cloud);
     };
     document.body.appendChild(crop);
