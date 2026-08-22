@@ -1,0 +1,1 @@
+(function(){let done=false;const check=()=>{if(done)return;const t=document.getElementById('cloudHeaderText');if(t&&t.textContent.trim()==='Error de acceso'){done=true;setTimeout(()=>location.reload(),700)}};new MutationObserver(check).observe(document.body,{subtree:true,childList:true,characterData:true});check()})();
