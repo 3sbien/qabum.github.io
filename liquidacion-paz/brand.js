@@ -47,4 +47,11 @@ document.addEventListener('click',async e=>{
   if(e.target.closest('#exportBackup')){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();const payload={app:"Qabum Paz's Sale",version:1,exportedAt:new Date().toISOString(),settings:getSettings(),items:await dbGetAll()};const blob=new Blob([JSON.stringify(payload)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`Qabum_Pazs_Sale_Respaldo_${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);localStorage.setItem(BACKUP_KEY,new Date().toISOString());renderStorageNotice();renderSettings();toast('Respaldo descargado')}
 },true);
 
+function installQabumFavicon(){
+  document.querySelectorAll('link[rel="icon"],link[rel="shortcut icon"]').forEach(el=>el.remove());
+  const icon=document.createElement('link');icon.rel='icon';icon.type='image/svg+xml';icon.href='qabum-logo.svg';document.head.appendChild(icon);
+  const shortcut=document.createElement('link');shortcut.rel='shortcut icon';shortcut.href='qabum-logo.svg';document.head.appendChild(shortcut);
+}
+
+installQabumFavicon();
 document.title="Qabum | Paz's Sale";
