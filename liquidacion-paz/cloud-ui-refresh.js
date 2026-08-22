@@ -11,15 +11,23 @@
     catch{return false;}
   }
 
+  function safeToRefresh(){
+    if(document.hidden)return false;
+    const active=document.querySelector('.panel.active')?.id||'';
+    if(active==='new'||active==='settings')return false;
+    if(document.querySelector('dialog[open]'))return false;
+    return true;
+  }
+
   async function refreshSharedUi(){
-    if(busy || !authenticated() || typeof refresh!=='function')return;
+    if(busy || !authenticated() || !safeToRefresh() || typeof refresh!=='function')return;
     busy=true;
     try{await refresh();}
     catch(e){console.warn('Shared UI refresh skipped',e);}
     finally{busy=false;}
   }
 
-  function schedule(delay=120){
+  function schedule(delay=100){
     clearTimeout(timer);
     timer=setTimeout(refreshSharedUi,delay);
   }
@@ -32,10 +40,10 @@
   const observer=new MutationObserver(inspectSyncState);
   observer.observe(document.documentElement,{subtree:true,childList:true,characterData:true});
 
-  window.addEventListener('focus',()=>schedule(150));
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule(150);});
+  window.addEventListener('focus',()=>schedule(100));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule(100);});
 
-  // Lightweight polling so changes made by another administrator appear without a manual reload.
-  setInterval(()=>{if(!document.hidden)schedule(0);},20000);
-  setTimeout(inspectSyncState,500);
+  // Cross-device live refresh: visible shared-data screens update automatically.
+  setInterval(()=>schedule(0),5000);
+  setTimeout(inspectSyncState,400);
 })();
