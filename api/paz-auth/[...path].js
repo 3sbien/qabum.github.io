@@ -19,9 +19,9 @@ export default async function handler(req, res) {
     const target = `${AUTH_ORIGIN}/${path}${query.size ? `?${query}` : ''}`;
 
     const headers = {};
-    const skipRequestHeaders = new Set(['host', 'content-length', 'connection', 'transfer-encoding', 'accept-encoding']);
-    for (const [key, value] of Object.entries(req.headers || {})) {
-      if (!skipRequestHeaders.has(key.toLowerCase()) && value != null) headers[key] = value;
+    for (const key of ['accept','content-type','cookie','origin','referer','user-agent','authorization']) {
+      const value = req.headers?.[key];
+      if (value != null) headers[key] = value;
     }
 
     let body;
@@ -38,10 +38,11 @@ export default async function handler(req, res) {
       redirect: 'manual'
     });
 
-    const skipResponseHeaders = new Set(['set-cookie', 'content-length', 'content-encoding', 'transfer-encoding', 'connection']);
-    upstream.headers.forEach((value, key) => {
-      if (!skipResponseHeaders.has(key.toLowerCase())) res.setHeader(key, value);
-    });
+    const forwardHeaders = ['content-type','cache-control','location','set-auth-jwt','set-auth-token','x-neon-ret-request-id'];
+    for (const key of forwardHeaders) {
+      const value = upstream.headers.get(key);
+      if (value != null) res.setHeader(key, value);
+    }
 
     let cookies = [];
     if (typeof upstream.headers.getSetCookie === 'function') cookies = upstream.headers.getSetCookie();
