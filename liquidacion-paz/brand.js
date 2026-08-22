@@ -15,6 +15,12 @@
     const crop=document.createElement('script');
     crop.src='crop.js?v=3';
     crop.async=false;
+    crop.onload=()=>{
+      const cloud=document.createElement('script');
+      cloud.src='cloud.js?v=1';
+      cloud.async=false;
+      document.body.appendChild(cloud);
+    };
     document.body.appendChild(crop);
   };
   document.body.appendChild(core);
