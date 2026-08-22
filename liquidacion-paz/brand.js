@@ -21,9 +21,14 @@
       authProxy.async=false;
       authProxy.onload=()=>{
         const cloud=document.createElement('script');
-        cloud.src='cloud.js?v=2';
+        cloud.src='cloud.js?v=3';
         cloud.async=false;
         cloud.onload=()=>{
+          const uiRefresh=document.createElement('script');
+          uiRefresh.src='cloud-ui-refresh.js?v=1';
+          uiRefresh.async=false;
+          document.body.appendChild(uiRefresh);
+
           let tries=0;
           const kick=()=>{
             tries++;
