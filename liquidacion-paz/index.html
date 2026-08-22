@@ -3,22 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#111111" />
+  <meta name="theme-color" content="#012169" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Qabum | Inventario y Liquidación</title>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>Qabum | Paz's Sale</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="brand.css" />
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
   <script defer src="app.js"></script>
+  <script defer src="brand.js"></script>
 </head>
 <body>
   <header class="topbar">
     <div>
       <div class="eyebrow">Inventario + ventas + cobros</div>
-      <h1>Liquidación Paz</h1>
+      <h1>Paz's Sale</h1>
     </div>
-    <div class="qabum-badge">Powered by <strong>Qabum</strong></div>
+    <a class="brand-link" href="https://qabum.com" target="_blank" rel="noopener noreferrer" aria-label="Ir a qabum.com">
+      <img src="qabum-logo.svg" alt="Qabum™" />
+    </a>
   </header>
 
   <nav class="tabs" aria-label="Navegación principal">
@@ -103,6 +107,6 @@
   </dialog>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <footer>Powered by <strong>Qabum</strong></footer>
+  <footer><a href="https://qabum.com" target="_blank" rel="noopener noreferrer">Powered by <strong>Qabum™</strong></a></footer>
 </body>
 </html>
