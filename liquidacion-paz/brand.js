@@ -17,7 +17,7 @@
     crop.async=false;
     crop.onload=()=>{
       const cloud=document.createElement('script');
-      cloud.src='cloud.js?v=1';
+      cloud.src='cloud.js?v=2';
       cloud.async=false;
       document.body.appendChild(cloud);
     };
