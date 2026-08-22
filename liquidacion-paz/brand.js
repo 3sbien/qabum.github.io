@@ -4,12 +4,16 @@
   const shortcut=document.createElement('link');shortcut.rel='shortcut icon';shortcut.href='qabum-logo.svg';document.head.appendChild(shortcut);
   document.title="Qabum | Paz's Sale";
 
+  const cropFix=document.createElement('style');
+  cropFix.textContent='.photo-preview .photo-edit-btn{position:static!important;top:auto!important;right:auto!important;width:auto!important;height:auto!important;line-height:1.2!important;border:1px solid rgba(1,33,105,.25)!important;background:#fff!important;color:#012169!important;border-radius:999px!important;padding:6px 10px!important;font-size:11px!important;font-weight:800!important;display:inline-block!important}.thumb-wrap{position:relative!important}';
+  document.head.appendChild(cropFix);
+
   const core=document.createElement('script');
   core.src='brand-core.js?v=2';
   core.async=false;
   core.onload=()=>{
     const crop=document.createElement('script');
-    crop.src='crop.js?v=2';
+    crop.src='crop.js?v=3';
     crop.async=false;
     document.body.appendChild(crop);
   };
