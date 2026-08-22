@@ -33,6 +33,22 @@ function appendAuth(returnTo, code) {
   return `${returnTo}${returnTo.includes('?') ? '&' : '?'}auth=${encodeURIComponent(code)}`;
 }
 
+function routePath(req) {
+  const queryPath = req.query?.path;
+  if (Array.isArray(queryPath) && queryPath.length) return queryPath.join('/').replace(/^\/+|\/+$/g, '');
+  if (typeof queryPath === 'string' && queryPath) return queryPath.replace(/^\/+|\/+$/g, '');
+
+  try {
+    const host = String(req.headers?.host || 'localhost');
+    const pathname = new URL(String(req.url || '/'), `https://${host}`).pathname;
+    const marker = '/api/paz/';
+    if (!pathname.startsWith(marker)) return '';
+    return decodeURIComponent(pathname.slice(marker.length)).replace(/^\/+|\/+$/g, '');
+  } catch {
+    return '';
+  }
+}
+
 async function requireMember(req, res) {
   const ctx = await getPazAuthContext(req);
   if (!ctx?.user || !ctx?.jwt) {
@@ -210,7 +226,7 @@ async function handleSettings(req, res) {
 
 export default async function handler(req, res) {
   noCache(res);
-  const path = Array.isArray(req.query?.path) ? req.query.path.join('/') : String(req.query?.path || '');
+  const path = routePath(req);
   try {
     if (path === 'login') return await handleLogin(req, res);
     if (path === 'signup') return await handleSignup(req, res);
