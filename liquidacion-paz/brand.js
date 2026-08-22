@@ -29,6 +29,11 @@
           uiRefresh.async=false;
           document.body.appendChild(uiRefresh);
 
+          const ai=document.createElement('script');
+          ai.src='ai-analysis.js?v=1';
+          ai.async=false;
+          document.body.appendChild(ai);
+
           let tries=0;
           const kick=()=>{
             tries++;
