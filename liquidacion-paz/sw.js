@@ -1,4 +1,4 @@
-const CACHE='qabum-pazs-sale-v10';
+const CACHE='qabum-pazs-sale-v11';
 const ASSETS=['./','index.html','styles.css','brand.css','app.js','brand.js','brand-core.js','crop.js','crop.css','cloud-server.js','cloud.css','manifest.json','icon.svg','qabum-logo.svg'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));
