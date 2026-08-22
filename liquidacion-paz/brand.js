@@ -16,24 +16,25 @@
     crop.src='crop.js?v=3';
     crop.async=false;
     crop.onload=()=>{
-      const cloud=document.createElement('script');
-      cloud.src='cloud.js?v=2';
-      cloud.async=false;
-      cloud.onload=()=>{
-        const recovery=document.createElement('script');
-        recovery.src='ui-recovery.js?v=1';
-        recovery.async=false;
-        document.body.appendChild(recovery);
-
-        let tries=0;
-        const kick=()=>{
-          tries++;
-          if(window.PazSaleCloud && typeof db!=='undefined' && db){window.PazSaleCloud.sync();return;}
-          if(tries<40)setTimeout(kick,250);
+      const authProxy=document.createElement('script');
+      authProxy.src='auth-proxy-fetch.js?v=1';
+      authProxy.async=false;
+      authProxy.onload=()=>{
+        const cloud=document.createElement('script');
+        cloud.src='cloud.js?v=2';
+        cloud.async=false;
+        cloud.onload=()=>{
+          let tries=0;
+          const kick=()=>{
+            tries++;
+            if(window.PazSaleCloud && typeof db!=='undefined' && db){window.PazSaleCloud.sync();return;}
+            if(tries<40)setTimeout(kick,250);
+          };
+          kick();
         };
-        kick();
+        document.body.appendChild(cloud);
       };
-      document.body.appendChild(cloud);
+      document.body.appendChild(authProxy);
     };
     document.body.appendChild(crop);
   };
