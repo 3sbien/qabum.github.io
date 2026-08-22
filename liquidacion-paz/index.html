@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#111111" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Qabum | Inventario y Liquidación</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <div class="eyebrow">Inventario + ventas + cobros</div>
+      <h1>Liquidación Paz</h1>
+    </div>
+    <div class="qabum-badge">Powered by <strong>Qabum</strong></div>
+  </header>
+
+  <nav class="tabs" aria-label="Navegación principal">
+    <button data-tab="dashboard" class="tab active">Resumen</button>
+    <button data-tab="inventory" class="tab">Inventario</button>
+    <button data-tab="new" class="tab primary-tab">+ Nuevo</button>
+    <button data-tab="sales" class="tab">Ventas</button>
+    <button data-tab="catalog" class="tab">Catálogo</button>
+    <button data-tab="settings" class="tab">Ajustes</button>
+  </nav>
+
+  <main>
+    <section id="dashboard" class="panel active">
+      <div id="storageNotice" class="notice"></div>
+      <div id="metrics" class="metrics"></div>
+      <div class="section-head"><div><h2>Actividad reciente</h2><p>Últimos artículos añadidos o modificados.</p></div></div>
+      <div id="recentItems" class="cards"></div>
+    </section>
+
+    <section id="inventory" class="panel">
+      <div class="section-head stack-mobile"><div><h2>Inventario</h2><p>Todo lo que aún debe venderse, está reservado o ya fue vendido.</p></div><button class="btn dark" data-go-new>+ Añadir artículo</button></div>
+      <div class="filters"><input id="searchInput" type="search" placeholder="Buscar por nombre, descripción o categoría" /><select id="statusFilter"><option value="TODOS">Todos los estados</option><option value="DISPONIBLE">Disponible</option><option value="PUBLICADO">Publicado</option><option value="RESERVADO">Reservado</option><option value="VENDIDO">Vendido</option></select></div>
+      <div id="inventoryGrid" class="cards"></div>
+    </section>
+
+    <section id="new" class="panel">
+      <div class="section-head"><div><h2 id="formTitle">Nuevo artículo</h2><p>Sube fotos y registra sólo lo necesario. Puedes completar detalles después.</p></div></div>
+      <form id="itemForm" class="form-card">
+        <input type="hidden" id="itemId" />
+        <div class="field full"><label for="photos">Fotos (hasta 5)</label><input id="photos" type="file" accept="image/*" capture="environment" multiple /><small>Las imágenes se comprimen automáticamente para no llenar el iPhone.</small><div id="photoPreview" class="photo-preview"></div></div>
+        <div class="field full"><label for="title">Qué es *</label><input id="title" required maxlength="90" placeholder="Ej. Mesa de comedor de madera" /></div>
+        <div class="field full"><label for="description">Descripción breve</label><textarea id="description" rows="3" maxlength="450" placeholder="Estado, tamaño aproximado, marca, material, etc."></textarea></div>
+        <div class="field"><label for="category">Categoría</label><input id="category" list="categoryList" placeholder="Muebles" /><datalist id="categoryList"><option>Muebles</option><option>Electrodomésticos</option><option>Decoración</option><option>Cocina</option><option>Ropa</option><option>Accesorios</option><option>Tecnología</option><option>Herramientas</option><option>Libros</option><option>Arte</option><option>Otros</option></datalist></div>
+        <div class="field"><label for="condition">Estado físico</label><select id="condition"><option value="MUY_BUENO">Muy bueno</option><option value="BUENO">Bueno</option><option value="REGULAR">Regular</option><option value="NUEVO">Nuevo / sin uso</option></select></div>
+        <div class="field"><label for="quickPrice">Venta rápida USD</label><input id="quickPrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" /></div>
+        <div class="field"><label for="suggestedPrice">PVP sugerido USD</label><input id="suggestedPrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Pendiente de análisis" /></div>
+        <div class="field"><label for="maxPrice">Máximo razonable USD</label><input id="maxPrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" /></div>
+        <div class="field"><label for="askingPrice">Precio publicado USD *</label><input id="askingPrice" required type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" /></div>
+        <div class="field"><label for="minimumPrice">Mínimo aceptable USD</label><input id="minimumPrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" /></div>
+        <div class="field"><label for="itemStatus">Estado comercial</label><select id="itemStatus"><option value="DISPONIBLE">Disponible</option><option value="PUBLICADO">Publicado</option><option value="RESERVADO">Reservado</option><option value="VENDIDO">Vendido</option></select></div>
+        <div class="field full"><label for="marketNotes">Análisis / referencias de mercado</label><textarea id="marketNotes" rows="3" maxlength="800" placeholder="Aquí quedarán las referencias usadas para justificar el precio sugerido."></textarea></div>
+        <div class="actions full"><button type="button" id="cancelEdit" class="btn ghost hidden">Cancelar edición</button><button type="submit" class="btn dark">Guardar artículo</button></div>
+      </form>
+    </section>
+
+    <section id="sales" class="panel">
+      <div class="section-head"><div><h2>Ventas y cobros</h2><p>Controla comprador, precio acordado, pagos parciales, forma de pago y saldo.</p></div></div>
+      <div id="salesList" class="sales-list"></div>
+    </section>
+
+    <section id="catalog" class="panel">
+      <div class="section-head stack-mobile"><div><h2>Catálogo para compartir</h2><p>Selecciona artículos y genera un PDF público sin datos internos de compradores o cobros.</p></div><button id="generatePdf" class="btn dark">Generar PDF</button></div>
+      <div class="catalog-tools"><button id="selectAvailable" class="btn ghost">Seleccionar disponibles</button><button id="clearSelection" class="btn ghost">Limpiar selección</button></div>
+      <div id="catalogGrid" class="catalog-grid"></div>
+    </section>
+
+    <section id="settings" class="panel">
+      <div class="section-head"><div><h2>Ajustes y respaldo</h2><p>Información pública del catálogo y copias de seguridad.</p></div></div>
+      <form id="settingsForm" class="form-card compact">
+        <div class="field full"><label for="catalogTitle">Título del catálogo</label><input id="catalogTitle" maxlength="100" value="Objetos disponibles" /></div>
+        <div class="field"><label for="contactName">Nombre de contacto</label><input id="contactName" maxlength="80" placeholder="María Paz" /></div>
+        <div class="field"><label for="contactPhone">Teléfono / WhatsApp</label><input id="contactPhone" maxlength="40" placeholder="+593 ..." /></div>
+        <div class="field full"><label for="locationText">Ubicación pública</label><input id="locationText" maxlength="100" placeholder="Quito, Ecuador" /></div>
+        <div class="actions full"><button class="btn dark" type="submit">Guardar ajustes</button></div>
+      </form>
+      <div class="backup-card"><h3>Respaldo completo</h3><p>El respaldo incluye artículos, fotos, ventas y pagos. Guárdalo en Google Drive.</p><div class="actions"><button id="exportBackup" class="btn dark">Exportar respaldo</button><label class="btn ghost file-label">Importar respaldo<input id="importBackup" type="file" accept="application/json" /></label></div><small id="backupStatus"></small></div>
+    </section>
+  </main>
+
+  <dialog id="saleDialog">
+    <form method="dialog" id="saleForm" class="dialog-card">
+      <div class="dialog-head"><div><div class="eyebrow">Venta y cobro</div><h2 id="saleItemTitle">Artículo</h2></div><button value="cancel" class="icon-btn" aria-label="Cerrar">×</button></div>
+      <input type="hidden" id="saleItemId" />
+      <div class="field"><label for="buyerName">Comprador</label><input id="buyerName" maxlength="100" placeholder="Opcional" /></div>
+      <div class="field"><label for="buyerPhone">Teléfono</label><input id="buyerPhone" maxlength="50" placeholder="Opcional" /></div>
+      <div class="field"><label for="saleDate">Fecha de venta</label><input id="saleDate" type="date" /></div>
+      <div class="field"><label for="salePrice">Precio a cobrar USD</label><input id="salePrice" type="number" min="0" step="0.01" inputmode="decimal" /><small id="salePriceRule"></small></div>
+      <div class="payment-summary" id="paymentSummary"></div><div id="paymentsHistory" class="payments-history"></div>
+      <fieldset id="paymentFieldset"><legend>Registrar pago</legend><div class="field"><label for="paymentDate">Fecha</label><input id="paymentDate" type="date" /></div><div class="field"><label for="paymentAmount">Monto USD</label><input id="paymentAmount" type="number" min="0.01" step="0.01" inputmode="decimal" /></div><div class="field"><label for="paymentMethod">Forma</label><select id="paymentMethod"><option>EFECTIVO</option><option>TRANSFERENCIA</option><option>OTRO</option></select></div><div class="field"><label for="paymentReference">Referencia</label><input id="paymentReference" maxlength="100" placeholder="Opcional" /></div><button type="button" id="addPayment" class="btn ghost">Añadir pago</button></fieldset>
+      <div class="actions"><button type="button" id="saveSale" class="btn dark">Guardar venta</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <footer>Powered by <strong>Qabum</strong></footer>
+</body>
+</html>
