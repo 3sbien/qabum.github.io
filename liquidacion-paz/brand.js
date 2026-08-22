@@ -25,7 +25,7 @@
         cloud.async=false;
         cloud.onload=()=>{
           const uiRefresh=document.createElement('script');
-          uiRefresh.src='cloud-ui-refresh.js?v=1';
+          uiRefresh.src='cloud-ui-refresh.js?v=2';
           uiRefresh.async=false;
           document.body.appendChild(uiRefresh);
 
