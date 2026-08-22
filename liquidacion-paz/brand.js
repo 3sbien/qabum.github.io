@@ -20,6 +20,11 @@
       cloud.src='cloud.js?v=2';
       cloud.async=false;
       cloud.onload=()=>{
+        const recovery=document.createElement('script');
+        recovery.src='ui-recovery.js?v=1';
+        recovery.async=false;
+        document.body.appendChild(recovery);
+
         let tries=0;
         const kick=()=>{
           tries++;
