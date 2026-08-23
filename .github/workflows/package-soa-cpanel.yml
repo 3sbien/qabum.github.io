@@ -1,0 +1,97 @@
+name: Package Seeds of Anarchy for cPanel
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/package-soa-cpanel.yml'
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build standalone cPanel package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Use the verified Seeds of Anarchy logo in the deployable package.
+          curl -L --fail --retry 2 \
+            'https://wunderbohnen.de/cdn/shop/collections/SoA_Logo_platzhalter_produktbild_Sementis.jpg?v=1759838033&width=1200' \
+            -o seeds-of-anarchy/assets/soa-logo-cpanel.jpg
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, shutil
+
+          src = Path('seeds-of-anarchy')
+          index = src / 'index.html'
+          html = index.read_text(encoding='utf-8')
+
+          mapping = {
+              'b1':'bullshit-01.jpg','b2':'bullshit-02.jpg','b3':'bullshit-03.jpg','b4':'bullshit-04.jpg','b5':'bullshit-05.jpg','b6':'bullshit-06.jpg',
+              'c1':'cabin-fever-01.jpg','c2':'cabin-fever-02.jpg','c3':'cabin-fever-03.jpg','c4':'cabin-fever-04.jpg','c5':'cabin-fever-05.jpg',
+              'd1':'dancing-sprite-01.jpg','d2':'dancing-sprite-02.jpg','d3':'dancing-sprite-03.jpg','d4':'dancing-sprite-04.jpg','d5':'dancing-sprite-05.jpg',
+              'go1':'gorgon-01.jpg','go2':'gorgon-02.jpg','go3':'gorgon-03.jpg','go4':'gorgon-04.jpg','go5':'gorgon-05.jpg',
+              'gu1':'gunk-01.jpg','gu2':'gunk-02.jpg',
+              'n1':'naughty-dawg-01.jpg','n2':'naughty-dawg-02.jpg','n3':'naughty-dawg-03.jpg','n4':'naughty-dawg-04.jpg','n5':'naughty-dawg-05.jpg','n6':'naughty-dawg-06.jpg',
+              's1':'slurpicle-01.jpg','s2':'slurpicle-02.jpg','s3':'slurpicle-03.jpg','s4':'slurpicle-04.jpg','s5':'slurpicle-05.jpg','s6':'slurpicle-06.jpg',
+              'sp1':'spritzade-01.jpg','sp2':'spritzade-02.jpg','sp3':'spritzade-03.jpg','sp4':'spritzade-04.jpg','sp5':'spritzade-05.jpg','sp6':'spritzade-05.jpg',
+          }
+
+          for key, filename in mapping.items():
+              html = html.replace(f'/api/soa-image?id={key}', f'assets/genetics/{filename}')
+
+          # Make the hero logo local, so cPanel does not depend on a third-party host.
+          html = re.sub(
+              r'src="https://wunderbohnen\.de/cdn/shop/collections/SoA_Logo_platzhalter_produktbild_Sementis\.jpg\?v=1759838033&amp;width=750"\s+onerror="[^"]*"',
+              'src="assets/soa-logo-cpanel.jpg"',
+              html,
+          )
+
+          # Safety checks before producing the ZIP.
+          assert '/api/soa-image' not in html, 'Vercel image API reference remains in index.html'
+          assert 'oaseeds.com/' not in html, 'External Oaseeds image reference remains in index.html'
+          assert 'wunderbohnen.de/cdn/shop/collections/SoA_Logo' not in html, 'External logo reference remains in index.html'
+          assert 'Qabum™' in html, 'Qabum trademark is missing'
+          assert 'rel="icon"' in html, 'Favicon is missing'
+          assert "assets/epstein-list-01.webp" in html, 'Epstein List is not using the local asset'
+
+          for filename in set(mapping.values()):
+              p = src / 'assets' / 'genetics' / filename
+              assert p.is_file() and p.stat().st_size > 1000, f'Missing/empty image: {p}'
+
+          for rel in ['assets/epstein-list-01.webp', 'assets/soa-logo-cpanel.jpg']:
+              p = src / rel
+              assert p.is_file() and p.stat().st_size > 1000, f'Missing/empty asset: {p}'
+
+          index.write_text(html, encoding='utf-8')
+
+          out = Path('cpanel-package')
+          if out.exists():
+              shutil.rmtree(out)
+          out.mkdir()
+          shutil.copy2(index, out / 'index.html')
+          shutil.copytree(src / 'assets', out / 'assets')
+
+          # Final package-level verification.
+          packaged = (out / 'index.html').read_text(encoding='utf-8')
+          assert '/api/' not in packaged
+          assert (out / 'assets' / 'epstein-list-01.webp').stat().st_size > 1000
+          assert (out / 'assets' / 'soa-logo-cpanel.jpg').stat().st_size > 1000
+          print('Standalone cPanel package validated successfully.')
+          PY
+
+          (cd cpanel-package && zip -r ../seedsofanarchy-cpanel.zip .)
+          unzip -t seedsofanarchy-cpanel.zip
+
+      - name: Upload cPanel ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: seedsofanarchy-cpanel
+          path: seedsofanarchy-cpanel.zip
+          if-no-files-found: error
+          retention-days: 7
