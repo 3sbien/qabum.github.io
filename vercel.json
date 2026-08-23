@@ -1,77 +1,24 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "rewrites": [
+  "routes": [
     {
-      "source": "/",
-      "destination": "/liquidacion-paz/index.html"
+      "src": "^/$",
+      "dest": "/liquidacion-paz/index.html"
     },
     {
-      "source": "/catalogo",
-      "destination": "/liquidacion-paz/catalogo/index.html"
+      "src": "^/catalogo/?$",
+      "dest": "/liquidacion-paz/catalogo/index.html"
     },
     {
-      "source": "/catalogo/",
-      "destination": "/liquidacion-paz/catalogo/index.html"
+      "src": "^/(manifest\\.json|styles\\.css|brand\\.css|cloud\\.css|crop\\.css|app\\.js|brand\\.js|brand-core\\.js|crop\\.js|cloud-server\\.js|sw\\.js|icon\\.svg|qabum-logo\\.svg)$",
+      "dest": "/liquidacion-paz/$1"
     },
     {
-      "source": "/manifest.json",
-      "destination": "/liquidacion-paz/manifest.json"
+      "src": "^/liquidacion-paz/?$",
+      "dest": "/liquidacion-paz/index.html"
     },
     {
-      "source": "/styles.css",
-      "destination": "/liquidacion-paz/styles.css"
-    },
-    {
-      "source": "/brand.css",
-      "destination": "/liquidacion-paz/brand.css"
-    },
-    {
-      "source": "/cloud.css",
-      "destination": "/liquidacion-paz/cloud.css"
-    },
-    {
-      "source": "/crop.css",
-      "destination": "/liquidacion-paz/crop.css"
-    },
-    {
-      "source": "/app.js",
-      "destination": "/liquidacion-paz/app.js"
-    },
-    {
-      "source": "/brand.js",
-      "destination": "/liquidacion-paz/brand.js"
-    },
-    {
-      "source": "/brand-core.js",
-      "destination": "/liquidacion-paz/brand-core.js"
-    },
-    {
-      "source": "/crop.js",
-      "destination": "/liquidacion-paz/crop.js"
-    },
-    {
-      "source": "/cloud-server.js",
-      "destination": "/liquidacion-paz/cloud-server.js"
-    },
-    {
-      "source": "/sw.js",
-      "destination": "/liquidacion-paz/sw.js"
-    },
-    {
-      "source": "/icon.svg",
-      "destination": "/liquidacion-paz/icon.svg"
-    },
-    {
-      "source": "/qabum-logo.svg",
-      "destination": "/liquidacion-paz/qabum-logo.svg"
-    },
-    {
-      "source": "/liquidacion-paz",
-      "destination": "/liquidacion-paz/index.html"
-    },
-    {
-      "source": "/liquidacion-paz/",
-      "destination": "/liquidacion-paz/index.html"
+      "handle": "filesystem"
     }
   ]
 }
