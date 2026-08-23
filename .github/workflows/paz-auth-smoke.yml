@@ -1,0 +1,71 @@
+name: Paz Sale auth smoke test
+
+on:
+  push:
+    paths:
+      - '.github/workflows/paz-auth-smoke.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test first-party signup, cookie, logout and login
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE='https://qabum-o1.vercel.app'
+          EMAIL="paz-sale-smoke-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}@example.com"
+          PASSWORD="Smoke-${GITHUB_RUN_ID}-$(openssl rand -hex 8)!"
+          JAR="$(mktemp)"
+
+          echo "TEST_EMAIL=$EMAIL"
+
+          signup_code=$(curl -sS -o /dev/null -w '%{http_code}' -c "$JAR" \
+            -H 'Content-Type: application/x-www-form-urlencoded' \
+            --data-urlencode "name=Paz Sale Smoke Test" \
+            --data-urlencode "email=$EMAIL" \
+            --data-urlencode "password=$PASSWORD" \
+            --data-urlencode 'returnTo=/liquidacion-paz/' \
+            "$BASE/api/paz/signup")
+          test "$signup_code" = '303'
+          grep -q 'paz_sale_session' "$JAR"
+
+          session1=$(curl -sS -b "$JAR" "$BASE/api/paz/session")
+          echo "SESSION_AFTER_SIGNUP=$session1"
+          echo "$session1" | grep -q '"authenticated":true'
+          echo "$session1" | grep -q "$EMAIL"
+
+          items_code=$(curl -sS -o /tmp/items.json -w '%{http_code}' -b "$JAR" "$BASE/api/paz/items")
+          echo "ITEMS_STATUS_AS_NONMEMBER=$items_code"
+          test "$items_code" = '403'
+
+          logout_code=$(curl -sS -o /tmp/logout.json -w '%{http_code}' -b "$JAR" -c "$JAR" \
+            -X POST -H "Origin: $BASE" -H 'Content-Type: application/json' -d '{}' \
+            "$BASE/api/paz/logout")
+          echo "LOGOUT_STATUS=$logout_code"
+          test "$logout_code" = '200'
+
+          session2=$(curl -sS -b "$JAR" "$BASE/api/paz/session")
+          echo "SESSION_AFTER_LOGOUT=$session2"
+          echo "$session2" | grep -q '"authenticated":false'
+
+          : > "$JAR"
+          login_code=$(curl -sS -o /dev/null -w '%{http_code}' -c "$JAR" \
+            -H 'Content-Type: application/x-www-form-urlencoded' \
+            --data-urlencode "email=$EMAIL" \
+            --data-urlencode "password=$PASSWORD" \
+            --data-urlencode 'returnTo=/liquidacion-paz/' \
+            "$BASE/api/paz/login")
+          echo "LOGIN_STATUS=$login_code"
+          test "$login_code" = '303'
+          grep -q 'paz_sale_session' "$JAR"
+
+          session3=$(curl -sS -b "$JAR" "$BASE/api/paz/session")
+          echo "SESSION_AFTER_LOGIN=$session3"
+          echo "$session3" | grep -q '"authenticated":true'
+          echo "$session3" | grep -q "$EMAIL"
+
+          echo 'PAZ_AUTH_SMOKE=PASS'
