@@ -1,0 +1,88 @@
+name: Localize SoA catalog images
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/sync-soa-assets.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download catalog images into repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p seeds-of-anarchy/assets/genetics
+          get() { curl -L --fail --retry 3 --retry-delay 2 --connect-timeout 20 --max-time 120 "$2" -o "seeds-of-anarchy/assets/genetics/$1"; }
+
+          get bullshit-01.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/1.jpg?v=1766057486'
+          get bullshit-02.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/2.jpg?v=1766057486'
+          get bullshit-03.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/5.jpg?v=1766057486'
+          get bullshit-04.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/4.jpg?v=1766057486'
+          get bullshit-05.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/Bullshit__6.jpg?v=1766057486'
+          get bullshit-06.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/3.jpg?v=1766057486'
+
+          get cabin-fever-01.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/1_ed7f1ef7-d44c-499f-88db-d5a8efec745b.jpg?v=1766058827'
+          get cabin-fever-02.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/2_f0779e76-298b-4e92-b628-2ee1da09ab72.jpg?v=1766058827'
+          get cabin-fever-03.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/Cabin_Fever_3.jpg?v=1766058827'
+          get cabin-fever-04.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/rn-image_picker_lib_temp_5e24d799-f48a-4c53-84c4-64298d63e050.jpg?v=1766058827'
+          get cabin-fever-05.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/rn-image_picker_lib_temp_8c9eb428-263a-4d55-865b-e10ddf18684f.jpg?v=1766058827'
+
+          get dancing-sprite-01.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/1_e0c2a0fe-d280-49e5-97f6-4e4f847e6a33.jpg?v=1766058718'
+          get dancing-sprite-02.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/2_af31f934-a46c-4a86-b5dc-b936e0878e6e.jpg?v=1766058718'
+          get dancing-sprite-03.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/3_12fdfc5e-8577-486d-aaff-bdda46c0c310.jpg?v=1766058718'
+          get dancing-sprite-04.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/Dancing_Sprite_2.jpg?v=1766058738'
+          get dancing-sprite-05.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/rn-image_picker_lib_temp_37ad39a2-6437-4ad5-92ee-501908f7e0f6.jpg?v=1766058738'
+
+          get gorgon-01.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/2_a862791f-0dc2-413e-98c5-3ba104935a57.jpg?v=1766058605'
+          get gorgon-02.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/1_a5c49b61-cc65-4043-b32f-79dc393216d6.jpg?v=1766058605'
+          get gorgon-03.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/Gorgon__3.jpg?v=1766058605'
+          get gorgon-04.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/rn-image_picker_lib_temp_3db95f14-a711-4afd-a866-738bfc6f248f.jpg?v=1766058605'
+          get gorgon-05.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/rn-image_picker_lib_temp_8ac93a81-cc94-4630-b1a4-bbbf0da59e9a.jpg?v=1766058605'
+
+          get gunk-01.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/rn-image_picker_lib_temp_6162698d-df47-4b84-9031-da00dc658212.jpg?v=1766936568'
+          get gunk-02.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/rn-image_picker_lib_temp_7d024d34-f5a1-4e6d-9fcd-b64b142ba023.jpg?v=1766936568'
+
+          get naughty-dawg-01.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/2_80d2ac1b-ad79-477b-81db-7f50d8c5660c.jpg?v=1766058504'
+          get naughty-dawg-02.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/3_983c2582-2ea6-4072-b43b-c55036ec6ded.jpg?v=1766058504'
+          get naughty-dawg-03.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/Naughty_Dawg_7.jpg?v=1766058504'
+          get naughty-dawg-04.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/Naughty_Dawg_6.jpg?v=1766058504'
+          get naughty-dawg-05.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/1_95d5d561-78d6-43d3-9eb5-19f36fbbbd03.jpg?v=1766058504'
+          get naughty-dawg-06.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/Naughty_Dawg.jpg?v=1766058504'
+
+          get slurpicle-01.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/3_5c759cde-2638-4b10-a9df-bd93859a52bb.jpg?v=1766058385'
+          get slurpicle-02.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/1_c9209ba5-7cde-4e69-9add-c45a1cd0b397.jpg?v=1766058385'
+          get slurpicle-03.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/Slurpicle__3.jpg?v=1766058385'
+          get slurpicle-04.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/2_4556e2bd-8a3c-4819-a3f9-a37c8b8893f4.jpg?v=1766058385'
+          get slurpicle-05.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/Slurpicle__4.jpg?v=1766058385'
+          get slurpicle-06.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/rn-image_picker_lib_temp_d83e4b9c-e346-4b73-87ab-44d40393d60a.jpg?v=1766058385'
+
+          get spritzade-01.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/1_dfd32d95-555c-4f91-ae2b-9996303332b8.jpg?v=1766058211'
+          get spritzade-02.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/3_9e0cc282-e715-47a0-9818-b8e763d06035.jpg?v=1766058211'
+          get spritzade-03.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/Spritzade__5.jpg?v=1766058211'
+          get spritzade-04.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/rn-image_picker_lib_temp_d8d79013-673b-4839-beb1-629452d33e2d.jpg?v=1766058211'
+          get spritzade-05.jpg 'https://cdn.shopify.com/s/files/1/0913/8841/2281/files/4_7c1bd9dc-ec23-4e52-921f-463c5b320554.jpg?v=1766058211'
+
+          file seeds-of-anarchy/assets/genetics/*
+          test -s seeds-of-anarchy/assets/genetics/bullshit-01.jpg
+          test -s seeds-of-anarchy/assets/genetics/spritzade-01.jpg
+
+      - name: Commit localized images
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name '3sbien'
+          git config user.email '3sbien@gmail.com'
+          git add seeds-of-anarchy/assets/genetics
+          if git diff --cached --quiet; then
+            echo 'No image changes to commit.'
+          else
+            git commit -m 'Localize Seeds of Anarchy catalog images'
+            git push
+          fi
