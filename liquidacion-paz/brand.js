@@ -23,6 +23,12 @@
       const cloud=document.createElement('script');
       cloud.src='cloud-server.js?v=1';
       cloud.async=false;
+      cloud.onload=()=>{
+        const blob=document.createElement('script');
+        blob.src='/liquidacion-paz/blob-storage.js?v=1';
+        blob.async=false;
+        document.body.appendChild(blob);
+      };
       document.body.appendChild(cloud);
     };
     document.body.appendChild(crop);
