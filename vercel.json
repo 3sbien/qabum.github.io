@@ -2,6 +2,86 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     {
+      "source": "/",
+      "has": [{ "type": "host", "value": "pazventa.qabum.com" }],
+      "destination": "/liquidacion-paz/index.html"
+    },
+    {
+      "source": "/catalogo",
+      "has": [{ "type": "host", "value": "pazventa.qabum.com" }],
+      "destination": "/liquidacion-paz/catalogo/index.html"
+    },
+    {
+      "source": "/catalogo/",
+      "has": [{ "type": "host", "value": "pazventa.qabum.com" }],
+      "destination": "/liquidacion-paz/catalogo/index.html"
+    },
+    {
+      "source": "/manifest.json",
+      "has": [{ "type": "host", "value": "pazventa.qabum.com" }],
+      "destination": "/liquidacion-paz/manifest.json"
+    },
+    {
+      "source": "/styles.css",
+      "has": [{ "type": "host", "value": "pazventa.qabum.com" }],
+      "destination": "/liquidacion-paz/styles.css"
+    },
+    {
+      "source": "/brand.css",
+      "has": [{ "type": "host", "value": "pazventa.qabum.com" }],
+      "destination": "/liquidacion-paz/brand.css"
+    },
+    {
+      "source": "/cloud.css",
+      "has": [{ "type": "host", "value": "pazventa.qabum.com" }],
+      "destination": "/liquidacion-paz/cloud.css"
+    },
+    {
+      "source": "/crop.css",
+      "has": [{ "type": "host", "value": "pazventa.qabum.com" }],
+      "destination": "/liquidacion-paz/crop.css"
+    },
+    {
+      "source": "/app.js",
+      "has": [{ "type": "host", "value": "pazventa.qabum.com" }],
+      "destination": "/liquidacion-paz/app.js"
+    },
+    {
+      "source": "/brand.js",
+      "has": [{ "type": "host", "value": "pazventa.qabum.com" }],
+      "destination": "/liquidacion-paz/brand.js"
+    },
+    {
+      "source": "/brand-core.js",
+      "has": [{ "type": "host", "value": "pazventa.qabum.com" }],
+      "destination": "/liquidacion-paz/brand-core.js"
+    },
+    {
+      "source": "/crop.js",
+      "has": [{ "type": "host", "value": "pazventa.qabum.com" }],
+      "destination": "/liquidacion-paz/crop.js"
+    },
+    {
+      "source": "/cloud-server.js",
+      "has": [{ "type": "host", "value": "pazventa.qabum.com" }],
+      "destination": "/liquidacion-paz/cloud-server.js"
+    },
+    {
+      "source": "/sw.js",
+      "has": [{ "type": "host", "value": "pazventa.qabum.com" }],
+      "destination": "/liquidacion-paz/sw.js"
+    },
+    {
+      "source": "/icon.svg",
+      "has": [{ "type": "host", "value": "pazventa.qabum.com" }],
+      "destination": "/liquidacion-paz/icon.svg"
+    },
+    {
+      "source": "/qabum-logo.svg",
+      "has": [{ "type": "host", "value": "pazventa.qabum.com" }],
+      "destination": "/liquidacion-paz/qabum-logo.svg"
+    },
+    {
       "source": "/liquidacion-paz",
       "destination": "/liquidacion-paz/index.html"
     },
