@@ -6,6 +6,9 @@ on:
     paths:
       - '.github/workflows/package-soa-cpanel.yml'
 
+permissions:
+  contents: write
+
 jobs:
   package:
     runs-on: ubuntu-latest
@@ -18,7 +21,6 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Use the verified Seeds of Anarchy logo in the deployable package.
           curl -L --fail --retry 2 \
             'https://wunderbohnen.de/cdn/shop/collections/SoA_Logo_platzhalter_produktbild_Sementis.jpg?v=1759838033&width=1200' \
             -o seeds-of-anarchy/assets/soa-logo-cpanel.jpg
@@ -45,14 +47,12 @@ jobs:
           for key, filename in mapping.items():
               html = html.replace(f'/api/soa-image?id={key}', f'assets/genetics/{filename}')
 
-          # Make the hero logo local, so cPanel does not depend on a third-party host.
           html = re.sub(
               r'src="https://wunderbohnen\.de/cdn/shop/collections/SoA_Logo_platzhalter_produktbild_Sementis\.jpg\?v=1759838033&amp;width=750"\s+onerror="[^"]*"',
               'src="assets/soa-logo-cpanel.jpg"',
               html,
           )
 
-          # Safety checks before producing the ZIP.
           assert '/api/soa-image' not in html, 'Vercel image API reference remains in index.html'
           assert 'oaseeds.com/' not in html, 'External Oaseeds image reference remains in index.html'
           assert 'wunderbohnen.de/cdn/shop/collections/SoA_Logo' not in html, 'External logo reference remains in index.html'
@@ -68,16 +68,13 @@ jobs:
               p = src / rel
               assert p.is_file() and p.stat().st_size > 1000, f'Missing/empty asset: {p}'
 
-          index.write_text(html, encoding='utf-8')
-
           out = Path('cpanel-package')
           if out.exists():
               shutil.rmtree(out)
           out.mkdir()
-          shutil.copy2(index, out / 'index.html')
+          (out / 'index.html').write_text(html, encoding='utf-8')
           shutil.copytree(src / 'assets', out / 'assets')
 
-          # Final package-level verification.
           packaged = (out / 'index.html').read_text(encoding='utf-8')
           assert '/api/' not in packaged
           assert (out / 'assets' / 'epstein-list-01.webp').stat().st_size > 1000
@@ -88,7 +85,23 @@ jobs:
           (cd cpanel-package && zip -r ../seedsofanarchy-cpanel.zip .)
           unzip -t seedsofanarchy-cpanel.zip
 
-      - name: Upload cPanel ZIP
+      - name: Publish validated ZIP to repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cp seedsofanarchy-cpanel.zip dist/seedsofanarchy-cpanel.zip
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add dist/seedsofanarchy-cpanel.zip
+          if git diff --cached --quiet; then
+            echo 'ZIP unchanged; nothing to commit.'
+          else
+            git commit -m 'Build validated Seeds of Anarchy cPanel ZIP'
+            git push
+          fi
+
+      - name: Upload cPanel ZIP artifact
         uses: actions/upload-artifact@v4
         with:
           name: seedsofanarchy-cpanel
