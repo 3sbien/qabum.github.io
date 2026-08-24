@@ -25,17 +25,22 @@
       cloud.async=false;
       cloud.onload=()=>{
         const safety=document.createElement('script');
-        safety.src='/liquidacion-paz/sync-safety.js?v=1';
+        safety.src='/liquidacion-paz/sync-safety.js?v=2';
         safety.async=false;
         safety.onload=()=>{
-          const blob=document.createElement('script');
-          blob.src='/liquidacion-paz/blob-storage.js?v=1';
-          blob.async=false;
-          document.body.appendChild(blob);
-          const passwordLinks=document.createElement('script');
-          passwordLinks.src='/liquidacion-paz/password-links.js?v=1';
-          passwordLinks.async=false;
-          document.body.appendChild(passwordLinks);
+          const loadAfterSafety=()=>{
+            const blob=document.createElement('script');
+            blob.src='/liquidacion-paz/blob-storage.js?v=1';
+            blob.async=false;
+            document.body.appendChild(blob);
+            const passwordLinks=document.createElement('script');
+            passwordLinks.src='/liquidacion-paz/password-links.js?v=1';
+            passwordLinks.async=false;
+            document.body.appendChild(passwordLinks);
+          };
+          const ready=window.PazSaleSyncSafetyReady;
+          if(ready&&typeof ready.finally==='function')ready.catch(e=>console.warn(e)).finally(loadAfterSafety);
+          else loadAfterSafety();
         };
         document.body.appendChild(safety);
       };
