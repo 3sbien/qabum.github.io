@@ -20,20 +20,26 @@
     crop.src='crop.js?v=3';
     crop.async=false;
     crop.onload=()=>{
-      const cloud=document.createElement('script');
-      cloud.src='cloud-server.js?v=1';
-      cloud.async=false;
-      cloud.onload=()=>{
-        const blob=document.createElement('script');
-        blob.src='/liquidacion-paz/blob-storage.js?v=1';
-        blob.async=false;
-        document.body.appendChild(blob);
-        const passwordLinks=document.createElement('script');
-        passwordLinks.src='/liquidacion-paz/password-links.js?v=1';
-        passwordLinks.async=false;
-        document.body.appendChild(passwordLinks);
+      const guard=document.createElement('script');
+      guard.src='/liquidacion-paz/no-loss-guard.js?v=1';
+      guard.async=false;
+      guard.onload=()=>{
+        const cloud=document.createElement('script');
+        cloud.src='cloud-server.js?v=1';
+        cloud.async=false;
+        cloud.onload=()=>{
+          const blob=document.createElement('script');
+          blob.src='/liquidacion-paz/blob-storage.js?v=1';
+          blob.async=false;
+          document.body.appendChild(blob);
+          const passwordLinks=document.createElement('script');
+          passwordLinks.src='/liquidacion-paz/password-links.js?v=1';
+          passwordLinks.async=false;
+          document.body.appendChild(passwordLinks);
+        };
+        document.body.appendChild(cloud);
       };
-      document.body.appendChild(cloud);
+      document.body.appendChild(guard);
     };
     document.body.appendChild(crop);
   };
