@@ -20,14 +20,14 @@
     crop.src='crop.js?v=3';
     crop.async=false;
     crop.onload=()=>{
-      const guard=document.createElement('script');
-      guard.src='/liquidacion-paz/no-loss-guard.js?v=1';
-      guard.async=false;
-      guard.onload=()=>{
-        const cloud=document.createElement('script');
-        cloud.src='cloud-server.js?v=1';
-        cloud.async=false;
-        cloud.onload=()=>{
+      const cloud=document.createElement('script');
+      cloud.src='cloud-server.js?v=2';
+      cloud.async=false;
+      cloud.onload=()=>{
+        const safety=document.createElement('script');
+        safety.src='/liquidacion-paz/sync-safety.js?v=1';
+        safety.async=false;
+        safety.onload=()=>{
           const blob=document.createElement('script');
           blob.src='/liquidacion-paz/blob-storage.js?v=1';
           blob.async=false;
@@ -37,9 +37,9 @@
           passwordLinks.async=false;
           document.body.appendChild(passwordLinks);
         };
-        document.body.appendChild(cloud);
+        document.body.appendChild(safety);
       };
-      document.body.appendChild(guard);
+      document.body.appendChild(cloud);
     };
     document.body.appendChild(crop);
   };
