@@ -1,7 +1,7 @@
 {
   "$schema":"https://openapi.vercel.sh/vercel.json",
   "routes":[
-    {"src":"^/$","dest":"/liquidacion-paz/index.html"},
+    {"src":"^/$","dest":"/liquidacion-paz/catalogo/index.html"},
     {"src":"^/catalogo/?$","dest":"/liquidacion-paz/catalogo/index.html"},
     {"src":"^/(manifest\\.json|styles\\.css|brand\\.css|cloud\\.css|crop\\.css|app\\.js|brand\\.js|brand-core\\.js|crop\\.js|cloud-server\\.js|sw\\.js|icon\\.svg|qabum-logo\\.svg)$","dest":"/liquidacion-paz/$1"},
     {"src":"^/liquidacion-paz/?$","dest":"/liquidacion-paz/index.html"},
