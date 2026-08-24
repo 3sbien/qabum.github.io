@@ -63,7 +63,9 @@ async function requireMember(req, res) {
 }
 
 function publicRow(item, ownerUserId, updatedAt) {
-  const firstPhoto = Array.isArray(item?.photos) && item.photos[0] ? item.photos[0] : null;
+  const publicPhotos = Array.isArray(item?.photos)
+    ? item.photos.filter((photo) => typeof photo === 'string' && photo).slice(0, 5)
+    : [];
   return {
     id: String(item.id),
     owner_user_id: ownerUserId,
@@ -72,7 +74,7 @@ function publicRow(item, ownerUserId, updatedAt) {
     category: String(item.category || ''),
     status: String(item.status || 'DISPONIBLE'),
     asking_price: Number(item.askingPrice || 0),
-    photos: firstPhoto ? [firstPhoto] : [],
+    photos: publicPhotos,
     updated_at: updatedAt,
   };
 }
