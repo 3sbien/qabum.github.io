@@ -9,17 +9,85 @@
     .replace(/[^A-Z0-9]+/g, '')
     .trim();
 
+  const normalizeField = value => String(value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, '')
+    .trim();
+
+  const queryTokens = value => String(value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase()
+    .trim()
+    .split(/\s+/)
+    .map(part => part.replace(/[^A-Z0-9]+/g, ''))
+    .filter(Boolean);
+
+  const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[char]);
+
+  const money = value => value == null || value === '' ? '—' : '$' + Number(value).toFixed(2);
+
   let loading = false;
   let lastLoadedAt = 0;
   let searchRefreshTimer = null;
+  let programmaticRefresh = false;
 
   function currentCode() {
     return sessionStorage.getItem('nvloc_code') || '';
   }
 
+  function renderPreciseSearch() {
+    const q = document.querySelector('#q');
+    const count = document.querySelector('#count');
+    const results = document.querySelector('#results');
+    if (!q || !count || !results) return;
+
+    const tokens = queryTokens(q.value);
+    if (!tokens.length) return;
+
+    const rows = (window.NOVOLOV_DATA || []).filter(row => {
+      const fields = row.map(normalizeField);
+      return tokens.every(token => fields.some(field => field.includes(token)));
+    });
+
+    count.textContent = rows.length + (rows.length === 1 ? ' resultado' : ' resultados');
+    const show = rows.slice(0, 120);
+
+    results.innerHTML = show.length ? show.map(row =>
+      `<article class="item"><h3>${escapeHtml(row[2])}</h3>` +
+      `<span class="pill">${escapeHtml(row[0])}</span>` +
+      `<span class="pill">Barras ${escapeHtml(row[1])}</span>` +
+      `<span class="pill loc">📍 ${escapeHtml(row[4] || 'SIN UBICACIÓN')}</span>` +
+      `<div class="details">` +
+      `<div><div class="lab">Marca</div><div class="val">${escapeHtml(row[5] || '—')}</div></div>` +
+      `<div><div class="lab">Talla</div><div class="val">${escapeHtml(row[6] || '—')}</div></div>` +
+      `<div><div class="lab">Color</div><div class="val">${escapeHtml(row[7] || '—')}</div></div>` +
+      `<div><div class="lab">PVP</div><div class="val">${money(row[3])}</div></div>` +
+      `<div><div class="lab">Estado</div><div class="val">${escapeHtml(row[8] || '—')}</div></div>` +
+      `<div><div class="lab">Ubicación</div><div class="val">${escapeHtml(row[4] || '—')}</div></div>` +
+      `</div></article>`
+    ).join('') : '<div class="empty">No encontré coincidencias. Prueba con menos palabras.</div>';
+
+    if (rows.length > 120) {
+      results.insertAdjacentHTML('beforeend', '<div class="empty">Hay más resultados. Agrega otro dato para acotar la búsqueda.</div>');
+    }
+  }
+
   function refreshVisibleSearch() {
     const q = document.querySelector('#q');
-    if (q && q.value) q.dispatchEvent(new Event('input', { bubbles: true }));
+    if (q && q.value) {
+      programmaticRefresh = true;
+      q.dispatchEvent(new Event('input', { bubbles: true }));
+      programmaticRefresh = false;
+    }
   }
 
   function showLiveError() {
@@ -102,10 +170,15 @@
   }, true);
 
   document.addEventListener('input', event => {
-    if (!event.target || event.target.id !== 'q') return;
+    if (!event.target || event.target.id !== 'q' || programmaticRefresh) return;
     clearTimeout(searchRefreshTimer);
     searchRefreshTimer = setTimeout(() => loadLiveFeed(true), 300);
   }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const q = document.querySelector('#q');
+    if (q) q.addEventListener('input', renderPreciseSearch);
+  });
 
   window.addEventListener('focus', () => loadLiveFeed(true));
 
