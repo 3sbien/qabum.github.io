@@ -1,6 +1,8 @@
 {
   "$schema":"https://openapi.vercel.sh/vercel.json",
   "routes":[
+    {"src":"^/favicon\\.ico$","has":[{"type":"host","value":"busca.novolov.com"}],"dest":"/liquidacion-paz/qabum-logo.svg","headers":{"Cache-Control":"no-store, no-cache, must-revalidate, max-age=0"}},
+    {"src":"^/favicon\\.svg$","has":[{"type":"host","value":"busca.novolov.com"}],"dest":"/liquidacion-paz/qabum-logo.svg","headers":{"Cache-Control":"no-store, no-cache, must-revalidate, max-age=0"}},
     {"src":"^/$","has":[{"type":"host","value":"busca.novolov.com"}],"dest":"/novolov/localizador/index.html","headers":{"Cache-Control":"no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0","Pragma":"no-cache","Expires":"0"}},
     {"src":"^/(data-01\\.js|data-02\\.js|data-03\\.js|data-04\\.js|data-05\\.js|data-06\\.js|data\\.json|overrides\\.js)$","has":[{"type":"host","value":"busca.novolov.com"}],"dest":"/novolov/localizador/$1","headers":{"Cache-Control":"no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0","Pragma":"no-cache","Expires":"0"}},
     {"src":"^/novolov/localizador/(.*)$","headers":{"Cache-Control":"no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0","Pragma":"no-cache","Expires":"0"},"continue":true},
