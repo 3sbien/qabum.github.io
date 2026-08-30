@@ -1,1 +1,114 @@
-(function(){const p={"26000001":["AC2308-003-007-01","26000001","DELINEADOR DE OJOS PUNTA PLUMON",7.0,"LAVADO","","","","PENDIENTE_REVISION"],"26000002":["AC2308-003-007-02","26000002","DELINEADOR DE OJOS PUNTA PLUMON",7.0,"LAVADO","","","","PENDIENTE_REVISION"],"26000003":["AC2308-003-007-03","26000003","DELINEADOR DE OJOS PUNTA PLUMON",7.0,"LAVADO","","","","PENDIENTE_REVISION"],"26000232":["EM2608-000-000-01","26000232","ENTERIZO DE JEAN",null,"ZAMBIZA","LAVISH ALICE","34","NEGRO","PENDIENTE_REVISION"],"26000236":["CL2608-010-028-01","26000236","CHALECO",28.0,"CCI","RESERVED","L","BEIGE CON NEGRO","PENDIENTE_REVISION"],"26000246":["EM2608-020-065-01","26000246","ENTERIZO LARGO",65.0,"CCI","H&M","M","NEGRO LENTEJUELAS","PENDIENTE_REVISION"],"26000275":["CL2608-018-052-01","26000275","CHALECO TIPO PELUCHE",52.0,"CCI","FOREVER NEW","38","NEGRO","PENDIENTE_REVISION"],"26000284":["EM2608-015-048-01","26000284","ENTERIZO",48.0,"CCI","RIVERISLAND","L","DORADO","PENDIENTE_REVISION"]};const d=window.NOVOLOV_DATA||[];for(let i=0;i<d.length;i++){const n=p[d[i][1]];if(n)d[i]=n}})();
+(function () {
+  window.NOVOLOV_DATA = [];
+  window.NOVOLOV_LIVE_STATUS = 'loading';
+
+  const normalizeCode = value => String(value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, '')
+    .trim();
+
+  let loading = false;
+  let lastLoadedAt = 0;
+
+  function currentCode() {
+    return sessionStorage.getItem('nvloc_code') || '';
+  }
+
+  function refreshVisibleSearch() {
+    const q = document.querySelector('#q');
+    if (q && q.value) q.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  function showLiveError() {
+    const results = document.querySelector('#results');
+    const count = document.querySelector('#count');
+    if (count) count.textContent = 'Datos en vivo no disponibles';
+    if (results) {
+      results.innerHTML = '<div class="empty">No pude consultar el inventario en vivo. Intenta nuevamente en unos segundos.</div>';
+    }
+  }
+
+  async function loadLiveFeed(force) {
+    const code = currentCode();
+    if (!code || loading) return;
+    if (!force && Date.now() - lastLoadedAt < 5000) return;
+
+    loading = true;
+    window.NOVOLOV_LIVE_STATUS = 'loading';
+
+    try {
+      const response = await fetch('/api/novolov-feed', {
+        method: 'POST',
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache'
+        },
+        body: JSON.stringify({ code })
+      });
+
+      if (!response.ok) throw new Error('LIVE_FEED_HTTP_' + response.status);
+      const payload = await response.json();
+      if (!payload || payload.ok !== true || !Array.isArray(payload.items)) {
+        throw new Error('LIVE_FEED_INVALID');
+      }
+
+      window.NOVOLOV_DATA = payload.items.map(item => [
+        item.codigo || '',
+        item.barras || '',
+        item.prenda || '',
+        item.pvp === '' || item.pvp == null ? null : Number(String(item.pvp).replace(',', '.')),
+        item.ubicacion || '',
+        item.marca || '',
+        item.talla || '',
+        item.color || '',
+        item.estado || ''
+      ]);
+
+      window.NOVOLOV_LIVE_STATUS = 'ready';
+      lastLoadedAt = Date.now();
+      refreshVisibleSearch();
+    } catch (error) {
+      window.NOVOLOV_DATA = [];
+      window.NOVOLOV_LIVE_STATUS = 'error';
+      showLiveError();
+    } finally {
+      loading = false;
+    }
+  }
+
+  function rememberCodeAndLoad() {
+    const input = document.querySelector('#code');
+    if (!input) return;
+    const code = normalizeCode(input.value);
+    if (!code) return;
+    sessionStorage.setItem('nvloc_code', code);
+    setTimeout(() => loadLiveFeed(true), 250);
+  }
+
+  document.addEventListener('click', event => {
+    if (event.target && event.target.closest && event.target.closest('#enter')) {
+      rememberCodeAndLoad();
+    }
+  }, true);
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && event.target && event.target.id === 'code') {
+      rememberCodeAndLoad();
+    }
+  }, true);
+
+  window.addEventListener('focus', () => loadLiveFeed(true));
+  setInterval(() => loadLiveFeed(false), 15000);
+
+  if (sessionStorage.getItem('nvloc') === '1') {
+    if (!currentCode()) {
+      sessionStorage.removeItem('nvloc');
+      location.reload();
+    } else {
+      setTimeout(() => loadLiveFeed(true), 50);
+    }
+  }
+})();
