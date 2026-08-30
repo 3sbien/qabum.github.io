@@ -11,6 +11,7 @@
 
   let loading = false;
   let lastLoadedAt = 0;
+  let searchRefreshTimer = null;
 
   function currentCode() {
     return sessionStorage.getItem('nvloc_code') || '';
@@ -33,7 +34,7 @@
   async function loadLiveFeed(force) {
     const code = currentCode();
     if (!code || loading) return;
-    if (!force && Date.now() - lastLoadedAt < 5000) return;
+    if (!force && Date.now() - lastLoadedAt < 1500) return;
 
     loading = true;
     window.NOVOLOV_LIVE_STATUS = 'loading';
@@ -100,8 +101,13 @@
     }
   }, true);
 
+  document.addEventListener('input', event => {
+    if (!event.target || event.target.id !== 'q') return;
+    clearTimeout(searchRefreshTimer);
+    searchRefreshTimer = setTimeout(() => loadLiveFeed(true), 300);
+  }, true);
+
   window.addEventListener('focus', () => loadLiveFeed(true));
-  setInterval(() => loadLiveFeed(false), 15000);
 
   if (sessionStorage.getItem('nvloc') === '1') {
     if (!currentCode()) {
