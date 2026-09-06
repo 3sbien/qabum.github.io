@@ -2,7 +2,7 @@
   document.querySelectorAll('link[rel="icon"],link[rel="shortcut icon"]').forEach(el=>el.remove());
   const icon=document.createElement('link');icon.rel='icon';icon.type='image/svg+xml';icon.href='qabum-logo.svg';document.head.appendChild(icon);
   const shortcut=document.createElement('link');shortcut.rel='shortcut icon';shortcut.href='qabum-logo.svg';document.head.appendChild(shortcut);
-  document.title="Qabum | Paz's Sale";
+  document.title="QSale";
 
   if(!document.querySelector('link[href^="cloud.css"]')){
     const cloudCss=document.createElement('link');cloudCss.rel='stylesheet';cloudCss.href='cloud.css?v=3';document.head.appendChild(cloudCss);
