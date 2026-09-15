@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#08286f">
+  <title>CARTERA · Novolov</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--blue:#08286f;--blue2:#174497;--gold:#b89d18;--ink:#18223b;--muted:#67738b;--soft:#f5f7fb;--line:#e5e9f2;--ok:#147a48;--warn:#8a6400;--bad:#a32626}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Comfortaa,system-ui,sans-serif;color:var(--ink);background:linear-gradient(#fff,#f4f6fb);min-height:100vh;font-size:18px}
+    .wrap{max-width:1180px;margin:auto;padding:26px 24px 50px}
+    header{display:grid;grid-template-columns:220px 1fr 180px;gap:28px;align-items:center;border-bottom:3px solid var(--gold);padding:4px 4px 20px}
+    .brand{font-weight:700;font-size:34px;letter-spacing:.08em;color:var(--blue)}
+    h1{margin:0;color:var(--blue);font-size:42px;letter-spacing:.02em}
+    .tag{margin-top:8px;color:#4e5d78;font-size:17px;line-height:1.45}
+    .powered{text-align:right;font-size:11px;color:#7c8495}.powered img{display:block;margin:6px 0 0 auto;width:120px;max-height:55px;object-fit:contain}
+    .card{background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:0 18px 55px rgba(8,40,111,.09);padding:26px;margin-top:24px}
+    .login{max-width:560px;margin:54px auto}
+    .login h2,.search h2{font-size:27px;margin:0 0 12px;color:var(--blue)}
+    .hint{color:var(--muted);line-height:1.5;font-size:15px}
+    input{width:100%;border:2px solid #cfd6e5;border-radius:18px;padding:18px 20px;font-family:inherit;font-size:22px;outline:none;background:#fff}
+    input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(8,40,111,.08)}
+    button{border:0;border-radius:17px;background:var(--blue);color:#fff;font-family:inherit;font-size:18px;font-weight:700;padding:16px 22px;cursor:pointer}
+    button:hover{background:var(--blue2)} button:disabled{opacity:.6;cursor:wait}
+    .login button{width:100%;margin-top:13px}
+    .msg{min-height:24px;margin-top:12px;font-size:14px;color:var(--bad)}
+    #app{display:none}
+    .searchbox{display:flex;gap:12px}
+    .searchbox input{font-size:24px;padding:20px}
+    .safe{margin-top:13px;padding:12px 15px;border-radius:14px;background:#f2f6ff;color:#345178;font-size:13px;line-height:1.45}
+    .topline{display:flex;justify-content:space-between;gap:20px;align-items:center;margin:25px 4px 12px}
+    .count{font-weight:700;color:var(--blue)}
+    .logout{background:#edf1f8;color:var(--blue);font-size:13px;padding:11px 15px}
+    .summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+    .metric{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px 18px}
+    .metric .lab{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#8892a6}.metric .num{font-size:26px;font-weight:700;color:var(--blue);margin-top:5px}
+    .alert{display:none;margin:15px 0;padding:14px 16px;border-radius:15px;background:#fff6cf;color:#6b5600;font-size:14px;line-height:1.5}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .item{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px 22px;box-shadow:0 8px 28px rgba(20,33,61,.06)}
+    .item h3{font-size:22px;margin:0 0 12px;color:#101d3e}
+    .pill{display:inline-block;background:#eef3ff;color:var(--blue);border-radius:999px;padding:7px 11px;font-size:13px;font-weight:700;margin:0 7px 7px 0}
+    .loc{background:#fff6cf;color:#6b5600}.state{background:#edf8f2;color:var(--ok)}
+    .details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px;margin-top:10px}
+    .lab{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#8892a6}.val{font-size:15px;font-weight:600;overflow-wrap:anywhere;margin-top:3px}
+    .notes{margin-top:14px;border-top:1px solid var(--line);padding-top:12px;color:#59647a;font-size:13px;line-height:1.5}
+    .empty{text-align:center;padding:46px;color:var(--muted);font-size:18px;background:#fff;border:1px solid var(--line);border-radius:20px}
+    footer{text-align:center;color:#8a93a5;font-size:11px;margin-top:28px}
+    @media(max-width:800px){header{grid-template-columns:1fr;gap:8px}.brand{font-size:28px}h1{font-size:30px}.tag{font-size:14px}.powered{text-align:left}.powered img{margin-left:0;width:105px}.wrap{padding:16px 12px 35px}.card{border-radius:19px;padding:18px}.grid,.summary{grid-template-columns:1fr}.searchbox{display:block}.searchbox button{width:100%;margin-top:9px}.details{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">NOVOLOV</div>
+    <div>
+      <h1>Cartera</h1>
+      <div class="tag">Consulta privada de cuentas por cobrar por cédula o celular.</div>
+    </div>
+    <div class="powered">Powered by Qabum™<img src="/liquidacion-paz/qabum-logo.svg" alt="Qabum"></div>
+  </header>
+
+  <section id="login" class="card login">
+    <h2>Acceso restringido</h2>
+    <p class="hint">Este módulo contiene información privada de clientes. Ingrese su código autorizado.</p>
+    <input id="code" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Código de acceso">
+    <button id="loginBtn" type="button">Ingresar</button>
+    <div id="loginMsg" class="msg"></div>
+  </section>
+
+  <main id="app">
+    <section class="card search">
+      <h2>Buscar cliente</h2>
+      <p class="hint">Ingrese exactamente una cédula ecuatoriana o un número celular. No se permiten búsquedas por nombre.</p>
+      <div class="searchbox">
+        <input id="query" type="text" inputmode="numeric" autocomplete="off" placeholder="Cédula o celular">
+        <button id="searchBtn" type="button">Buscar</button>
+      </div>
+      <div class="safe">La consulta es exacta. Los datos completos de cartera no se descargan al navegador; el servidor devuelve únicamente los registros que coinciden con el identificador consultado.</div>
+    </section>
+
+    <div class="topline">
+      <div id="count" class="count"></div>
+      <button id="logoutBtn" class="logout" type="button">Cerrar acceso</button>
+    </div>
+
+    <div id="summary" class="summary" style="display:none">
+      <div class="metric"><div class="lab">Saldo pendiente</div><div id="totalSaldo" class="num">$0.00</div></div>
+      <div class="metric"><div class="lab">Registros encontrados</div><div id="registros" class="num">0</div></div>
+      <div class="metric"><div class="lab">Consulta</div><div id="consulta" class="num" style="font-size:19px">—</div></div>
+    </div>
+
+    <div id="alert" class="alert"></div>
+    <section id="results" class="grid"></section>
+  </main>
+
+  <footer>Novolov · Uso interno autorizado</footer>
+</div>
+
+<script>
+(() => {
+  let accessCode = '';
+
+  const $ = id => document.getElementById(id);
+  const money = value => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(Number(value || 0));
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+  const normalizeQuery = value => {
+    let digits = String(value ?? '').replace(/\D/g,'');
+    if (digits.length === 12 && digits.startsWith('593')) digits = '0' + digits.slice(3);
+    if (digits.length === 9 && digits.startsWith('9')) digits = '0' + digits;
+    return digits;
+  };
+
+  async function callApi(q) {
+    const response = await fetch('/api/novolov-cartera', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      cache: 'no-store',
+      body: JSON.stringify({ code: accessCode, q })
+    });
+    let data = {};
+    try { data = await response.json(); } catch {}
+    return { response, data };
+  }
+
+  async function login() {
+    const code = $('code').value.trim();
+    $('loginMsg').textContent = '';
+    if (!code) { $('loginMsg').textContent = 'Ingrese su código de acceso.'; return; }
+    accessCode = code;
+    $('loginBtn').disabled = true;
+    try {
+      const { response, data } = await callApi('0000000000');
+      if (response.status === 401 || data?.error === 'UNAUTHORIZED') {
+        accessCode = '';
+        $('loginMsg').textContent = 'Código no autorizado.';
+        return;
+      }
+      if (!response.ok || !data?.ok) {
+        accessCode = '';
+        $('loginMsg').textContent = 'El servicio de cartera no está disponible todavía.';
+        return;
+      }
+      $('login').style.display = 'none';
+      $('app').style.display = 'block';
+      $('query').focus();
+    } catch {
+      accessCode = '';
+      $('loginMsg').textContent = 'No fue posible conectar con el servicio.';
+    } finally {
+      $('loginBtn').disabled = false;
+    }
+  }
+
+  function render(data) {
+    $('summary').style.display = 'grid';
+    $('totalSaldo').textContent = money(data.totalSaldo);
+    $('registros').textContent = String(data.registros ?? 0);
+    $('consulta').textContent = data.query || '—';
+    $('count').textContent = data.found ? `${data.registros} registro${data.registros === 1 ? '' : 's'}` : 'Sin coincidencias';
+
+    const items = Array.isArray(data.items) ? data.items : [];
+    const alert = $('alert');
+    if (items.length > 1) {
+      alert.style.display = 'block';
+      alert.textContent = 'Hay más de un registro coincidente. Revise locales, cédula y notas antes de consolidar o asumir que corresponden a una sola identidad.';
+    } else {
+      alert.style.display = 'none';
+      alert.textContent = '';
+    }
+
+    if (!items.length) {
+      $('results').innerHTML = '<div class="empty">No existe cartera pendiente para ese identificador.</div>';
+      return;
+    }
+
+    $('results').innerHTML = items.map(item => `
+      <article class="item">
+        <h3>${esc(item.nombre || 'Sin nombre')}</h3>
+        <span class="pill">${esc(item.coincidencia || '')}</span>
+        <span class="pill loc">${esc(item.localOrigen || 'Sin local')}</span>
+        <span class="pill state">${esc(item.estado || 'Sin estado')}</span>
+        <div class="details">
+          <div><div class="lab">Cédula</div><div class="val">${esc(item.cedula || '—')}</div></div>
+          <div><div class="lab">Celular</div><div class="val">${esc(item.celular || '—')}</div></div>
+          <div><div class="lab">Saldo pendiente</div><div class="val">${money(item.saldoPendiente)}</div></div>
+          <div><div class="lab">Total abonado</div><div class="val">${money(item.totalAbonado)}</div></div>
+          <div><div class="lab">Créditos</div><div class="val">${money(item.totalCreditos)}</div></div>
+          <div><div class="lab">Reservas</div><div class="val">${money(item.totalReservas)}</div></div>
+          <div><div class="lab">Deuda generada</div><div class="val">${money(item.totalDeudaGenerada)}</div></div>
+          <div><div class="lab">Vendedor</div><div class="val">${esc(item.nombreVendedor || item.codigoVendedor || '—')}</div></div>
+          <div><div class="lab">Primera fecha</div><div class="val">${esc(item.primeraFecha || '—')}</div></div>
+          <div><div class="lab">Última fecha</div><div class="val">${esc(item.ultimaFecha || '—')}</div></div>
+        </div>
+        ${item.notas ? `<div class="notes"><strong>Notas:</strong> ${esc(item.notas)}</div>` : ''}
+      </article>`).join('');
+  }
+
+  async function search() {
+    const q = normalizeQuery($('query').value);
+    if (q.length !== 10) {
+      $('count').textContent = 'Ingrese una cédula o celular válido de 10 dígitos.';
+      return;
+    }
+    $('searchBtn').disabled = true;
+    $('count').textContent = 'Buscando…';
+    $('results').innerHTML = '';
+    try {
+      const { response, data } = await callApi(q);
+      if (response.status === 401) {
+        logout();
+        $('loginMsg').textContent = 'La sesión no está autorizada.';
+        return;
+      }
+      if (!response.ok || !data?.ok) {
+        $('count').textContent = 'No fue posible completar la consulta.';
+        return;
+      }
+      render(data);
+    } catch {
+      $('count').textContent = 'No fue posible conectar con el servicio.';
+    } finally {
+      $('searchBtn').disabled = false;
+    }
+  }
+
+  function logout() {
+    accessCode = '';
+    $('code').value = '';
+    $('query').value = '';
+    $('results').innerHTML = '';
+    $('summary').style.display = 'none';
+    $('alert').style.display = 'none';
+    $('count').textContent = '';
+    $('app').style.display = 'none';
+    $('login').style.display = 'block';
+    $('code').focus();
+  }
+
+  $('loginBtn').addEventListener('click', login);
+  $('code').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+  $('searchBtn').addEventListener('click', search);
+  $('query').addEventListener('keydown', e => { if (e.key === 'Enter') search(); });
+  $('logoutBtn').addEventListener('click', logout);
+})();
+</script>
+</body>
+</html>
