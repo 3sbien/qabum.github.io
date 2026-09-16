@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Qabum | Instructor Operations Control Tower</title>
+<style>
+:root{--bg:#0b0f14;--panel:#121821;--line:#263241;--text:#f5f7fa;--muted:#9aa7b5;--green:#37d67a;--amber:#f3b84b;--red:#ff6b6b;--blue:#62a8ff;--purple:#b18cff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}button{font:inherit}.wrap{max-width:1280px;margin:auto;padding:28px}.top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:24px}.brand{font-weight:800;letter-spacing:.08em}.brand span{color:var(--green)}h1{margin:8px 0 6px;font-size:30px}.sub{color:var(--muted);max-width:800px;line-height:1.45}.pill{border:1px solid var(--line);padding:8px 12px;border-radius:999px;color:var(--muted);font-size:13px}.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:20px 0}.metric{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}.metric strong{display:block;font-size:27px;margin-bottom:5px}.metric small{color:var(--muted)}.filters{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.filters button,.ai-btn{background:#151d27;color:var(--text);border:1px solid var(--line);padding:9px 13px;border-radius:9px;cursor:pointer}.filters button.active,.filters button:hover{border-color:var(--green)}.ai-btn{border-color:#4655ff;background:#1c2350}.grid{display:grid;gap:12px}.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;cursor:pointer;transition:.15s}.card:hover{transform:translateY(-1px);border-color:#3b4b5f}.row{display:grid;grid-template-columns:1.4fr .8fr .7fr 1.2fr .7fr;gap:14px;align-items:center}.name{font-weight:700}.meta,.label{color:var(--muted);font-size:12px}.value{margin-top:4px}.status{display:inline-flex;align-items:center;gap:7px;font-weight:700;font-size:13px}.dot{width:8px;height:8px;border-radius:50%}.ontrack .dot{background:var(--green)}.waiting .dot{background:var(--amber)}.blocked .dot,.overdue .dot{background:var(--red)}.ceo .dot{background:var(--purple)}.section{margin-top:30px}.section h2{font-size:18px;margin-bottom:12px}.note{background:#0f151d;border:1px solid var(--line);padding:14px;border-radius:12px;color:var(--muted);line-height:1.5}.drawer{position:fixed;top:0;right:-520px;width:min(520px,100%);height:100vh;background:#0e141c;border-left:1px solid var(--line);padding:24px;overflow:auto;transition:.22s;z-index:5}.drawer.open{right:0}.close{float:right;background:none;border:0;color:var(--text);font-size:28px;cursor:pointer}.check{display:grid;grid-template-columns:1fr auto;gap:10px;border-bottom:1px solid #1f2a36;padding:10px 0}.done{color:var(--green)}.pending{color:var(--amber)}.problem{color:var(--red)}.ai-box{margin-top:18px;background:#151a34;border:1px solid #343d7a;border-radius:12px;padding:16px}.ai-box h3{margin-top:0}.ai-item{padding:8px 0;border-bottom:1px solid #2b315e}.ai-item:last-child{border:0}.tiny{font-size:12px;color:var(--muted)}@media(max-width:850px){.metrics{grid-template-columns:repeat(2,1fr)}.row{grid-template-columns:1fr 1fr}.hide-sm{display:none}.top{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <div class="brand">QABUM<span>™</span></div>
+      <h1>Instructor Operations Control Tower</h1>
+      <div class="sub">A simple operational control layer for instructor onboarding. Communication can stay in email, WhatsApp and other tools; this view tells the team what that information means operationally.</div>
+    </div>
+    <div class="pill">Prototype • demo data only</div>
+  </div>
+
+  <div class="metrics" id="metrics"></div>
+
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+    <div class="filters" id="filters"></div>
+    <button class="ai-btn" onclick="runAIReview()">Run AI Exception Review</button>
+  </div>
+
+  <div class="grid" id="cards"></div>
+
+  <div class="section">
+    <h2>Operating logic</h2>
+    <div class="note"><strong style="color:#fff">Single source of operational truth:</strong> every instructor has one owner, one current stage, one next action, one due date, and visible blockers. Completion should be backed by evidence or a link—not by assumption. The CEO sees exceptions and decisions, not every task.</div>
+  </div>
+
+  <div class="section">
+    <h2>Before full implementation</h2>
+    <div class="note">Clarify who owns each stage, which system is authoritative for files, what actually requires CEO approval, standard turnaround times, and which communications can be automatically captured. Assumption for this prototype: Google Workspace or an equivalent shared file system is available.</div>
+  </div>
+</div>
+
+<div class="drawer" id="drawer">
+  <button class="close" onclick="closeDrawer()">×</button>
+  <div id="drawerContent"></div>
+</div>
+
+<script>
+const instructors=[
+ {name:'Dr. Sarah Reed',academy:'Data Analytics Academy',stage:'Production',status:'Waiting',owner:'Operations',next:'Confirm filming location',due:'Sep 18',blocker:'Studio confirmation pending',ceo:false,tasks:{'Agreement signed':'Done','Compensation confirmed':'Done','Bio collected':'Done','Headshot collected':'Done','Official title verified':'Done','Topics / curriculum':'Done','Filming date':'Done','Location':'Waiting','Production requirements':'In Progress','Supporting materials':'Waiting','Payment information':'Done','Marketing notified':'Not Started','Final assets stored':'Not Started'}},
+ {name:'Michael Torres',academy:'Executive Leadership Academy',stage:'Commercial',status:'CEO Attention',owner:'Chief of Staff',next:'Approve revised compensation',due:'Sep 16',blocker:'Compensation outside standard range',ceo:true,tasks:{'Agreement signed':'Waiting','Compensation confirmed':'Blocked','Bio collected':'Done','Headshot collected':'Done','Official title verified':'Done','Topics / curriculum':'In Progress','Filming date':'Not Started','Location':'Not Started','Production requirements':'Not Started','Supporting materials':'Not Started','Payment information':'Waiting','Marketing notified':'Not Started','Final assets stored':'Not Started'}},
+ {name:'Priya Nair',academy:'AI Operations Academy',stage:'Content',status:'On Track',owner:'Program Manager',next:'Review curriculum outline',due:'Sep 19',blocker:'None',ceo:false,tasks:{'Agreement signed':'Done','Compensation confirmed':'Done','Bio collected':'Done','Headshot collected':'Done','Official title verified':'Done','Topics / curriculum':'In Progress','Filming date':'Waiting','Location':'Waiting','Production requirements':'Not Started','Supporting materials':'In Progress','Payment information':'Done','Marketing notified':'Not Started','Final assets stored':'Not Started'}},
+ {name:'James Walker',academy:'Finance Academy',stage:'Production',status:'Overdue',owner:'Production',next:'Collect presentation materials',due:'Sep 14',blocker:'Slides not received',ceo:false,tasks:{'Agreement signed':'Done','Compensation confirmed':'Done','Bio collected':'Done','Headshot collected':'Done','Official title verified':'Done','Topics / curriculum':'Done','Filming date':'Done','Location':'Done','Production requirements':'Done','Supporting materials':'Blocked','Payment information':'Done','Marketing notified':'Waiting','Final assets stored':'Not Started'}},
+ {name:'Ana Silva',academy:'Growth Marketing Academy',stage:'Closeout',status:'On Track',owner:'Marketing',next:'Store final edited assets',due:'Sep 20',blocker:'None',ceo:false,tasks:{'Agreement signed':'Done','Compensation confirmed':'Done','Bio collected':'Done','Headshot collected':'Done','Official title verified':'Done','Topics / curriculum':'Done','Filming date':'Done','Location':'Done','Production requirements':'Done','Supporting materials':'Done','Payment information':'Done','Marketing notified':'Done','Final assets stored':'In Progress'}}
+];
+let filter='All';
+const statusClass=s=>s==='On Track'?'ontrack':s==='Waiting'?'waiting':s==='CEO Attention'?'ceo':s==='Overdue'?'overdue':'blocked';
+function render(){
+ const counts={all:instructors.length,on:instructors.filter(x=>x.status==='On Track').length,blocked:instructors.filter(x=>['Waiting','Blocked'].includes(x.status)).length,overdue:instructors.filter(x=>x.status==='Overdue').length,ceo:instructors.filter(x=>x.ceo).length};
+ document.getElementById('metrics').innerHTML=`<div class="metric"><strong>${counts.all}</strong><small>Active instructors</small></div><div class="metric"><strong>${counts.on}</strong><small>On track</small></div><div class="metric"><strong>${counts.blocked}</strong><small>Waiting / blocked</small></div><div class="metric"><strong>${counts.overdue}</strong><small>Overdue</small></div><div class="metric"><strong>${counts.ceo}</strong><small>CEO decision</small></div>`;
+ const f=['All','On Track','Waiting','Overdue','CEO Attention'];
+ document.getElementById('filters').innerHTML=f.map(x=>`<button class="${filter===x?'active':''}" onclick="setFilter('${x}')">${x}</button>`).join('');
+ const rows=instructors.filter(x=>filter==='All'||x.status===filter);
+ document.getElementById('cards').innerHTML=rows.map((x,i)=>`<div class="card" onclick="openDrawer('${x.name.replaceAll("'","\\'")}')"><div class="row"><div><div class="name">${x.name}</div><div class="meta">${x.academy}</div></div><div><div class="label">Stage</div><div class="value">${x.stage}</div></div><div><div class="label">Status</div><div class="status ${statusClass(x.status)}"><span class="dot"></span>${x.status}</div></div><div><div class="label">Next action</div><div class="value">${x.next}</div><div class="tiny">Owner: ${x.owner}</div></div><div class="hide-sm"><div class="label">Due</div><div class="value">${x.due}</div></div></div></div>`).join('');
+}
+function setFilter(x){filter=x;render()}
+function openDrawer(name){const x=instructors.find(i=>i.name===name);const taskHtml=Object.entries(x.tasks).map(([k,v])=>`<div class="check"><span>${k}</span><strong class="${v==='Done'?'done':v==='Blocked'?'problem':'pending'}">${v}</strong></div>`).join('');document.getElementById('drawerContent').innerHTML=`<div class="tiny">${x.academy}</div><h2>${x.name}</h2><p><strong>Owner:</strong> ${x.owner}<br><strong>Next action:</strong> ${x.next}<br><strong>Due:</strong> ${x.due}<br><strong>Blocker:</strong> ${x.blocker}<br><strong>CEO decision:</strong> ${x.ceo?'Yes':'No'}</p><h3>Instructor checklist</h3>${taskHtml}`;document.getElementById('drawer').classList.add('open')}
+function closeDrawer(){document.getElementById('drawer').classList.remove('open')}
+function runAIReview(){
+ const issues=[];
+ instructors.forEach(x=>{if(x.ceo)issues.push(`${x.name}: CEO decision required — ${x.blocker}.`);if(x.status==='Overdue')issues.push(`${x.name}: overdue — ${x.next}.`);const missing=Object.entries(x.tasks).filter(([k,v])=>['Blocked','Waiting'].includes(v)).map(([k])=>k);if(missing.length>=3)issues.push(`${x.name}: multiple dependencies unresolved — ${missing.slice(0,3).join(', ')}.`)});
+ const html=`<div class="ai-box"><h3>AI-assisted exception review</h3><div class="tiny">Prototype logic: identify exceptions and summarize where human attention is required. Production use would verify source data before changing status.</div>${issues.map(i=>`<div class="ai-item">${i}</div>`).join('')}</div>`;
+ document.getElementById('drawerContent').innerHTML=`<h2>Portfolio Exception Review</h2>${html}<div class="section"><div class="note"><strong style="color:#fff">Human verification rule:</strong> AI may summarize, extract and flag. It should not independently approve compensation, confirm contract completion, or mark critical business decisions as complete.</div></div>`;document.getElementById('drawer').classList.add('open')
+}
+render();
+</script>
+</body>
+</html>
