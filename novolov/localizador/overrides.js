@@ -1,5 +1,6 @@
 (function () {
-  window.NOVOLOV_DATA = [];
+  const STATIC_FALLBACK = Array.isArray(window.NOVOLOV_DATA) ? window.NOVOLOV_DATA.slice() : [];
+  window.NOVOLOV_DATA = STATIC_FALLBACK.slice();
   window.NOVOLOV_LIVE_STATUS = 'loading';
 
   const normalizeCode = value => String(value ?? '')
@@ -133,16 +134,18 @@
         item.marca || '',
         item.talla || '',
         item.color || '',
-        item.estado || ''
+        item.estado || '',
+        item.alias || ''
       ]);
 
       window.NOVOLOV_LIVE_STATUS = 'ready';
       lastLoadedAt = Date.now();
       refreshVisibleSearch();
     } catch (error) {
-      window.NOVOLOV_DATA = [];
-      window.NOVOLOV_LIVE_STATUS = 'error';
-      showLiveError();
+      window.NOVOLOV_DATA = STATIC_FALLBACK.slice();
+      window.NOVOLOV_LIVE_STATUS = window.NOVOLOV_DATA.length ? 'fallback' : 'error';
+      if (window.NOVOLOV_DATA.length) refreshVisibleSearch();
+      else showLiveError();
     } finally {
       loading = false;
     }

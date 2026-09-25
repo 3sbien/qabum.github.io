@@ -1,5 +1,7 @@
 import crypto from 'node:crypto';
 
+const LEGACY_ALIASES = new Map([['CY3108-015-035-01', 'RB3108-015-035-01']]);
+
 const ALLOWED = new Set([
   '211cd3f03b5104a8549e2a3431308db7df462d194cf05865f706004b1335ca53',
   '0a789ffeef13b1dfce35a672ef7a3a95a91671da756605104ac8b35f381dedd6',
@@ -101,7 +103,8 @@ export default async function handler(req, res) {
       marca: String(item.marca ?? ''),
       talla: String(item.talla ?? ''),
       color: String(item.color ?? ''),
-      estado: String(item.estado ?? '')
+      estado: String(item.estado ?? ''),
+      alias: String(item.alias ?? item.alias_codigo ?? item.ALIAS ?? LEGACY_ALIASES.get(String(item.codigo ?? '')) ?? '')
     }));
 
     return res.status(200).json({
